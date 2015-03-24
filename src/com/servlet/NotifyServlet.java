@@ -23,6 +23,7 @@ public class NotifyServlet extends HttpServlet {
             sb.append(line);
         }
         //sb为微信返回的xml
+        System.out.println(sb.toString());
 	}
 
 	/**

@@ -12,13 +12,13 @@ public class WxPayBean {
 	
 	public WxPayBean(){
 		this.appid="wxefe4f72f84521493";
-		this.backUri="http://zggpay.sinaapp.com/wechatPay/pay/topayServlet";
+		this.backUri="http://zggpay.sinaapp.com/pay/topayServlet";
 		this.appsecret="f930d1322d997c3262d492fe3fd769fc";
 		this.partner="1234272302@1234272302";
 		this.partnerkey="516556";
 		this.apikey="zhiguoguo2015zggzhiguoguo2014zgg";
 		this.mch_id="1234272302";
-		this.notify_url="www.baidu.com";
+		this.notify_url="http://zggpay.sinaapp.com/pay/NotifyServlet";
 	}
 	
 	public String getNotify_url() {

@@ -28,7 +28,7 @@ public class MainServlet extends HttpServlet {
 	//网页授权获取用户信息
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		System.out.println("进入支付第一环节");
 		WxPayBean wpb=new WxPayBean();
 		//账号及商户相关参数
 		String appid = wpb.getAppid();
@@ -44,7 +44,7 @@ public class MainServlet extends HttpServlet {
 		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
 		"appid=" + appid+"&redirect_uri=" + backUri+
 		"&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
-		
+		System.out.println("进入支付第一环节--url---"+url);
 		response.sendRedirect(url);
 	}
 
