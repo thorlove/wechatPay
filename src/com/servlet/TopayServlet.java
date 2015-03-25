@@ -1,11 +1,12 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.servlet.ServletException;
-import javax.servlet.SingleThreadModel;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -120,32 +121,28 @@ public class TopayServlet extends HttpServlet {
 		packageParams.put("mch_id", mch_id);
 		packageParams.put("nonce_str", nonce_str);
 		packageParams.put("body", body);
-		packageParams.put("body", body);
 		packageParams.put("attach", attach);
 		packageParams.put("out_trade_no", out_trade_no);
-
 		packageParams.put("total_fee", total_fee + "");
 		packageParams.put("spbill_create_ip", spbill_create_ip);
 		packageParams.put("notify_url", notify_url);
-
 		packageParams.put("trade_type", trade_type);
 		packageParams.put("openid", openid);
 		RequestHandler reqHandler = new RequestHandler(request, response);
 		reqHandler.init(appid, appsecret, partnerkey, apikey);
 		String sign = reqHandler.createSign(packageParams);
-		packageParams.put("sign", sign);  
-		
+		packageParams.put("sign", sign);
+
 		String xml = "<xml>" + "<appid>" + appid + "</appid>" + "<mch_id>"
 				+ mch_id + "</mch_id>" + "<nonce_str>" + nonce_str
-				+ "</nonce_str>" + "<sign>" + sign + "</sign>"
-				+ "<body><![CDATA[" + body + "]]></body>" + "<attach>" + attach
-				+ "</attach>" + "<out_trade_no>" + out_trade_no
-				+ "</out_trade_no>" + "<total_fee>" + total_fee
+				+ "</nonce_str>" + "<body><![CDATA[" + body + "]]></body>"
+				+ "<attach>" + attach + "</attach>" + "<out_trade_no>"
+				+ out_trade_no + "</out_trade_no>" + "<total_fee>" + total_fee
 				+ "</total_fee>" + "<spbill_create_ip>" + spbill_create_ip
 				+ "</spbill_create_ip>" + "<notify_url>" + notify_url
 				+ "</notify_url>" + "<trade_type>" + trade_type
 				+ "</trade_type>" + "<openid>" + openid + "</openid>"
-				+ "</xml>";
+				+ "<sign>" + sign + "</sign>" + "</xml>";
 		String createOrderURL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		String prepay_id = "";
 		try {
@@ -158,6 +155,8 @@ public class TopayServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
+		System.out.println("预支付订单id---" + prepay_id);
 		SortedMap<String, String> finalpackage = new TreeMap<String, String>();
 		String appid2 = appid;
 		String timestamp = Sha1Util.getTimeStamp();
@@ -174,9 +173,22 @@ public class TopayServlet extends HttpServlet {
 				+ timestamp + "&nonceStr=" + nonceStr2 + "&package=" + packages
 				+ "&sign=" + finalsign);
 		if (!response.isCommitted()) {
-			response.sendRedirect("pay.jsp?appid=" + appid2 + "&timeStamp="
-					+ timestamp + "&nonceStr=" + nonceStr2 + "&packages="
-					+ packages + "&sign=" + finalsign);
+
+			Map map = new HashMap();
+			map.put("appId", appid2);
+			map.put("timeStamp", timestamp);
+			map.put("nonceStr", nonceStr2);
+			map.put("package", packages);
+			map.put("signType", "MD5");
+			map.put("paySign", finalsign);
+			JSONObject json = JSONObject.fromObject(map);
+			System.out.println("返回数据---" + json);
+			request.setAttribute("jsonData", json);
+			// response.sendRedirect("pay.jsp?appid=" + appid2 + "&timeStamp="
+			// + timestamp + "&nonceStr=" + nonceStr2 + "&packages="
+			// + packages + "&sign=" + finalsign);
+			response.sendRedirect("pay.jsp?jsonData=" + json);
+
 		}
 		// return;
 	}
